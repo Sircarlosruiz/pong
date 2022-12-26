@@ -14,6 +14,12 @@ function love.load()
     math.randomseed(os.time())
     
     scoreFont = love.graphics.newFont('font.ttf', 32)
+
+    push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
+        fullscreen = false,
+        resizable = false,
+        vsync = true
+        })
     
     player1Score = 0
     player2Score = 0
@@ -21,22 +27,17 @@ function love.load()
     player1Y = 30
     player2Y = VIRTUAL_HEIGHT - 50
     
-    ballx = VIRTUAL_WIDTH / 2 - 2
-    bally = VIRTUAL_HEIGHT / 2 - 2
+    ballX = VIRTUAL_WIDTH / 2 - 2
+    ballY = VIRTUAL_HEIGHT / 2 - 2
     
     ballDX = math.random(2) == 1 and 100 or -100
     ballDY = math.random(-50, 50)
     
-    gameState = 'start'
-    
     smallfont = love.graphics.newFont('font.ttf', 8)
     love.graphics.setFont(smallfont)
+
+    gameState = 'start'
     
-    push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
-        fullscreen = false,
-        resizable = false,
-        vsync = true
-        })
 end
 
 function love.update(dt)
