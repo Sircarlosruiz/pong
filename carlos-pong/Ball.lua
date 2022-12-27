@@ -26,6 +26,18 @@ function Ball:init(x, y, width, height)
     self.dx = math.random(-50, 50)
 end
 
+function Ball:collides(paddle)
+  
+  if self.x > paddle.x + paddle.width or paddle.x > self.x + self.width then 
+    return false
+  end
+  
+  if self.y > paddle.y + paddle.height or paddle.y > self.y + self.height then
+    return false
+  end
+  return true
+end
+
 --[[
     Places the ball in the middle of the screen, with an initial random velocity
     on both axes.

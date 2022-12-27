@@ -86,7 +86,7 @@ function love.update(dt)
     ball.y = VIRTUAL_HEIGHT - 4
     ball.dy = -ball.dy
   end
-end
+
 
 
     -- player 1 movement
