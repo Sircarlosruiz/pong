@@ -51,6 +51,15 @@ function love.load()
 end
 
 function love.update(dt)
+  
+  if gameState == 'serve' then
+    ball.dy = math.random(-50, 50)
+    if servingPlayer == 1 then
+      ball.dx = math.random(140, 200)
+    else
+      ball.dx = -math.random(140, 200)
+    end
+  elseif gameState =='play' then
 
   if ball:collides(player1) then
     ball.dx = -ball.dx * 1.03
@@ -86,6 +95,9 @@ function love.update(dt)
     ball.y = VIRTUAL_HEIGHT - 4
     ball.dy = -ball.dy
   end
+  
+end
+
 
 if ball.x < 0 then
   servingPlayer = 1
