@@ -96,7 +96,33 @@ function love.update(dt)
     ball.dy = -ball.dy
   end
   
+  if ball.x < 0 then
+    servingPlayer = 1
+    player2Score = player2Score + 1
+    
+    if player2Score == 10 then
+      winningPlayer = 2
+      gameState = 'done'
+    else
+      gameState = 'serve'
+      ball:reset()
+    end
+  end
+  
+  if ball.x > VIRTUAL_WIDTH then
+    servingPlayer = 2
+    player1Score = player1Score + 1
+    
+    if player1Score == 10 then
+      winningPlayer = 1
+      gameState = 'done'
+    else
+      gameState = 'serve'
+      ball:reset()
+    end
+  end
 end
+  
 
 
 if ball.x < 0 then
@@ -162,7 +188,20 @@ function love.keypressed(key)
             -- ball's new reset method
             ball:reset()
         end
+  elseif gameState == 'done' then
+    gameState = 'serve'
+    
+    ball:reset()
+    
+    player1Score = 0
+    player2Score = 0
+    
+    if winningPlayer == 1 then
+      servingPlayer = 2
+    else
+      servingPlayer = 1
     end
+end
 end
 
 --[[
@@ -181,9 +220,18 @@ function love.draw()
     love.graphics.setFont(smallFont)
 
     if gameState == 'start' then
-        love.graphics.printf('Hola, Inicia el Juego!', 0, 20, VIRTUAL_WIDTH, 'center')
-    else
-        love.graphics.printf('Hola, Juego Iniciado!', 0, 20, VIRTUAL_WIDTH, 'center')
+      love.graphics.setFont(smallFont)
+      love.graphics.printf('Bienvenido amigue', 0, 10, VIRTUAL_WIDTH, 'center')
+      love.graphics.printf('Presiona Enter loco para iniciar', 0, 20, VIRTUAL_WIDTH, 'center')
+    elseif gameState == 'serve' then
+      love.graphics.setFont(smallFont)
+      love.graphics.printf('Jugador ' .. tostring(servingPlayer) .. "Sirve", 0, 10, VIRTUAL_WIDTH, 'center')
+    elseif gameState == 'play' then
+    elseif gameState == 'done' then
+      love.graphics.setFont(largeFont)
+      love.graphics.printf('Jugador ' .. tostring(winningPlayer) .. 'gano', 0, 10, VIRTUAL_WIDTH, 'center')
+      love.graphics.setFont(smallFont)
+      love.graphics.printf('Presiona enter locoman', 0, 30, VIRTUAL_WIDTH, 'center')
     end
 
     -- render paddles, now using their class's render method
