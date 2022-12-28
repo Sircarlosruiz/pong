@@ -25,6 +25,8 @@ function love.load()
 
   -- more "retro-looking" font object we can use for any text
   smallFont = love.graphics.newFont('font.ttf', 8)
+  largeFont = love.graphics.newFont('font.ttf', 16)
+  scoreFont = love.graphics.newFont('font.ttf', 32)
 
   -- set LÖVE2D's active font to the smallFont object
   love.graphics.setFont(smallFont)
@@ -42,6 +44,11 @@ function love.load()
       vsync = true
   })
 
+player1Score = 0
+player2Score = 0
+
+servingPlayer = 1
+
   -- initialize our player paddles; make them global so that they can be
   -- detected by other functions and modules
   player1 = Paddle(10, 30, 5, 20)
@@ -54,6 +61,10 @@ function love.load()
   -- (used for beginning, menus, main game, high score list, etc.)
   -- we will use this to determine behavior during render and update
   gameState = 'start'
+end
+
+function love.resize(w, h)
+  push:resize(w, h)
 end
 
 function love.update(dt)
@@ -196,33 +207,23 @@ end
     passes in the key we pressed so we can access.
 ]]
 function love.keypressed(key)
-    -- keys can be accessed by string name
-    if key == 'escape' then
-        -- function LÖVE gives us to terminate application
-        love.event.quit()
-    -- if we press enter during the start state of the game, we'll go into play mode
-    -- during play mode, the ball will move in a random direction
-    elseif key == 'enter' or key == 'return' then
-        if gameState == 'start' then
-            gameState = 'play'
-        else
-            gameState = 'start'
-
-            -- ball's new reset method
-            ball:reset()
-        end
-  elseif gameState == 'done' then
-    gameState = 'serve'
-    
-    ball:reset()
-    
-    player1Score = 0
-    player2Score = 0
-    
-    if winningPlayer == 1 then
-      servingPlayer = 2
-    else
-      servingPlayer = 1
+  if key == 'escape' then
+    love.event.quit()
+  elseif key == 'enter' or key == 'return' then
+    if gameState == 'start' then
+      gameState = 'serve'
+    elseif gameState == 'serve' then
+      gameState = 'play'
+    elseif gameState == 'done' then
+      gameState = 'serve'
+      ball:reset()
+      player1Score = 0
+      player2Score = 0
+      if winningPlayer == 1 then
+        servingPlayer = 2
+      else
+        servingPlayer = 1
+      end
     end
 end
 end
@@ -242,19 +243,21 @@ function love.draw()
     -- draw different things based on the state of the game
     love.graphics.setFont(smallFont)
 
+    displayScore()
+
     if gameState == 'start' then
       love.graphics.setFont(smallFont)
       love.graphics.printf('Bienvenido amigue', 0, 10, VIRTUAL_WIDTH, 'center')
       love.graphics.printf('Presiona Enter loco para iniciar', 0, 20, VIRTUAL_WIDTH, 'center')
     elseif gameState == 'serve' then
       love.graphics.setFont(smallFont)
-      love.graphics.printf('Jugador ' .. tostring(servingPlayer) .. "Sirve", 0, 10, VIRTUAL_WIDTH, 'center')
+      love.graphics.printf('Jugador ' .. tostring(servingPlayer) .. " ...Sirve", 0, 10, VIRTUAL_WIDTH, 'center')
     elseif gameState == 'play' then
     elseif gameState == 'done' then
       love.graphics.setFont(largeFont)
-      love.graphics.printf('Jugador ' .. tostring(winningPlayer) .. 'gano', 0, 10, VIRTUAL_WIDTH, 'center')
+      love.graphics.printf('Jugador ' .. tostring(winningPlayer) .. ' ...gano', 0, 10, VIRTUAL_WIDTH, 'center')
       love.graphics.setFont(smallFont)
-      love.graphics.printf('Presiona enter locoman', 0, 30, VIRTUAL_WIDTH, 'center')
+      love.graphics.printf('Presiona enter locoman ', 0, 30, VIRTUAL_WIDTH, 'center')
     end
 
     -- render paddles, now using their class's render method
@@ -274,4 +277,10 @@ function displayFPS()
   love.graphics.setFont(smallFont)
   love.graphics.setColor(0, 255/255, 0, 255/255)
   love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 10, 10)
+end
+
+function displayScore()
+  love.graphics.setFont(scoreFont)
+  love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH / 2 - 50, VIRTUAL_HEIGHT / 3)
+  love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH / 2 + 30, VIRTUAL_HEIGHT / 3)
 end
